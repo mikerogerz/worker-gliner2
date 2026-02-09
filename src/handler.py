@@ -1,4 +1,5 @@
 import time
+import gc
 import torch
 import runpod
 
@@ -66,6 +67,13 @@ def handler(event):
 	inference_time = time.time() - start_time
 	
 	print(f"Generated {len(texts)} entities in {inference_time:.2f}s")
+	
+	gc.collect()
+	torch.cuda.empty_cache()
+	
+	# Reset CUDA device to fully clear memory
+	torch.cuda.reset_peak_memory_stats()
+	torch.cuda.synchronize()  # Wait for all streams on the current device
 	
 	return results
 
