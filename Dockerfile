@@ -13,7 +13,8 @@ ENV MODEL_NAME=$MODEL_NAME \
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     WORKERS=1 \
-    THREADS=8
+    THREADS=8 \
+    PYTORCH_ALLOC_CONF=expandable_segments:True
 
 ENV HUGGINGFACE_HUB_CACHE="${BASE_PATH}/huggingface-cache/hub" \
 	HF_HOME="${BASE_PATH}/.cache/huggingface" \
