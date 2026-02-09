@@ -62,18 +62,24 @@ def handler(event):
 		"event": "A specific or noteworthy instance, or activity occurring within a defined context"
 	}
 	
+	results = []
+	
 	start_time = time.time()
-	results = model.batch_extract_entities(texts, entity_schema, threshold=0.9, batch_size=len(texts))
+	for text in texts:
+		entities = model.extract_entities(text, entity_schema, threshold=0.9)
+		results.append(entities)
 	inference_time = time.time() - start_time
 	
 	print(f"Generated {len(texts)} entities in {inference_time:.2f}s")
 	
 	gc.collect()
-	torch.cuda.empty_cache()
 	
-	# Reset CUDA device to fully clear memory
-	torch.cuda.reset_peak_memory_stats()
-	torch.cuda.synchronize()  # Wait for all streams on the current device
+	if torch.cuda.is_available():
+		torch.cuda.empty_cache()
+		
+		# Reset CUDA device to fully clear memory
+		torch.cuda.reset_peak_memory_stats()
+		torch.cuda.synchronize()  # Wait for all streams on the current device
 	
 	return results
 
